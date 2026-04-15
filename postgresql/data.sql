@@ -1,0 +1,7 @@
+-- The following is what we need to do and what to replace with these comments:
+--     Refer to this: https://enpm818t-spring-2026-docs.readthedocs.io/en/latest/final_project/scenario1/data_generation_guide.html
+--     Export schema definition. Paste prompt and schema into LLM like Claude, ChatGPT, or Gemini.
+--     Make sure the generated INSERT statements are right.
+--     Paste and save it in this file and load into database. 
+--     Fix any constraint violations and verify the data quality.
+--     Make sure to follow minimum data volumes + quality checks on our project doc site.

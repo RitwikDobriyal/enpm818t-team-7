@@ -1,0 +1,11 @@
+-- This is our schema implementation. 
+-- Replace these comments with the following:
+--      Custom types: ENUMs for constrained values
+--      All tables: Complete with all columns from GP1
+--      Primary keys: All defined correctly
+--      Foreign keys: With ON DELETE/UPDATE rules
+--      Check constraints: Business rules from your GP1 entity catalog
+--      NOT NULL constraints: All mandatory fields
+--      UNIQUE constraints: All candidate keys
+--      Indexes: Strategic indexes for query performance
+--      Triggers: Automatic updated_at timestamps
