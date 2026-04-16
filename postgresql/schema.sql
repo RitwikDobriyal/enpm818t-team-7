@@ -97,7 +97,7 @@ CREATE TABLE TRAFFIC_SIGNAL (
 CREATE TABLE SENSOR (
     sensor_id SERIAL PRIMARY KEY,
     type sensor_type NOT NULL,
-    status sensor_status DEFAULT 'operational',
+    status signal_status DEFAULT 'operational',
     location_details VARCHAR(100),
     transmission_frequency INTEGER,
     measured_parameter VARCHAR(50),
@@ -123,7 +123,7 @@ CREATE TABLE INCIDENT (
     road_segment_id INTEGER REFERENCES ROAD_SEGMENT(road_segment_id) ON DELETE SET NULL,
     intersection_id INTEGER REFERENCES INTERSECTION(intersection_id) ON DELETE SET NULL,
     
-    -- We need an Exclusive OR constraint here (XOR) to ensure a incident is linked to either an intersection or a road segment, but not both.
+    -- We need an Exclusive OR constraint here (XOR) to ensure an incident is linked to either an intersection or a road segment, but not both.
     CONSTRAINT chk_incident_location_xor CHECK (
         (intersection_id IS NOT NULL AND road_segment_id IS NULL) OR 
         (intersection_id IS NULL AND road_segment_id IS NOT NULL)
