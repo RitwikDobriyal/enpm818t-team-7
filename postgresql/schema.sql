@@ -4,7 +4,7 @@
 CREATE TYPE intersection_type AS ENUM ('signalized', 'unsignalized', 'roundabout');
 CREATE TYPE signal_approach AS ENUM ('N', 'S', 'E', 'W');
 CREATE TYPE signal_timing_mode AS ENUM ('fixed', 'adaptive', 'emergency');
-CREATE TYPE signal_hardware_type AS ENUM ('LED', 'incandescent', 'pedestrian')
+CREATE TYPE signal_hardware_type AS ENUM ('LED', 'incandescent', 'pedestrian');
 CREATE TYPE sensor_type AS ENUM ('inductive_loop', 'radar', 'camera', 'lidar', 'acoustic');
 CREATE TYPE signal_status AS ENUM ('operational', 'inactive', 'maintenance');
 CREATE TYPE road_surface AS ENUM('asphalt', 'concrete', 'gravel');
@@ -86,7 +86,7 @@ CREATE TABLE TRAFFIC_SIGNAL (
     type signal_hardware_type NOT NULL,
     timing_mode signal_timing_mode NOT NULL,
     default_speed INTEGER,
-    status VARCHAR(20) DEFAULT 'operational',
+    status signal_status DEFAULT 'operational',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
