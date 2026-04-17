@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 *.pyo
+.DS_Store
 .mypy_cache/
 .dmypy.json
 dmypy.json
