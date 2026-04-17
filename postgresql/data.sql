@@ -7,7 +7,7 @@
 -- incidents: 80
 -- maintenance_crews: 12
 -- maintenance_history: 120
--- maintenance_tasks: 105
+-- maintenance_tasks: 110
 -- =========================================================
 
 
@@ -136,7 +136,7 @@ SELECT
 FROM generate_series(1,120) i;
 
 -- =========================
--- MAINTENANCE TASKS (105)
+-- MAINTENANCE TASKS (110)
 -- =========================
 INSERT INTO maintenance_task (task_id, crew_id, sensor_id, task_description, scheduled_date, completed_date, status)
 SELECT
@@ -144,26 +144,48 @@ SELECT
     floor(random()*11 + 1)::int,
     floor(random()*191 + 1)::int,
     'Scheduled routine maintenance',
-    CURRENT_DATE - floor(random()*30)::int,
+    CURRENT_DATE - floor(random()*30 + 10)::int,
     CURRENT_DATE - floor(random()*10)::int,
     'completed'
-FROM generate_series(1, 105) i;
+FROM generate_series(1, 90) i;
+-- The following inserts data from broken sensors, compared to earlier which inserts 90 completed historical tasks randomly
+INSERT INTO maintenance_task (task_id, crew_id, sensor_id, task_description, scheduled_date, completed_date, status)
+SELECT
+    row_number() OVER () + 90, -- Starts IDs at 91 to prevent conflicts
+    floor(random()*11 + 1)::int,
+    sensor_id,
+    'Repair dispatch for offline sensor',
+    CURRENT_DATE + floor(random()*15 + 1)::int,
+    NULL,
+    'pending'
+FROM sensor
+WHERE status IN ('inactive', 'maintenance')
+LIMIT 20;
 
 
 -- =========================
 -- INCIDENTS (80, RUSH HOUR BIAS)
 -- =========================
+WITH generated_incidents AS (
+    SELECT
+        i,
+        (ARRAY['accident','breakdown','hazard','construction','event'])[floor(random()*5 + 1)::int]::incident_category_type AS inc_type,
+        (ARRAY['minor','moderate','major','critical'])[floor(random()*4 + 1)::int]::incident_severity AS inc_severity,
+        NOW() - (random()*90 || ' days')::interval + (CASE WHEN random() < 0.5 THEN interval '8 hours' ELSE interval '17 hours' END) AS rep_time,
+        (ARRAY['camera','sensor','report','police'])[floor(random()*4 + 1)::int] AS src,
+        floor(random()*63 + 1)::int AS int_id
+    FROM generate_series(1,80) i
+)
 INSERT INTO incident (incident_id, type, severity, reported_time, resolved_time, source, intersection_id)
 SELECT
     i,
-    (ARRAY['accident','breakdown','hazard','construction','event'])[floor(random()*5 + 1)::int]::incident_category_type,
-    (ARRAY['minor','moderate','major','critical'])[floor(random()*4 + 1)::int]::incident_severity,
-    NOW() - (random()*90 || ' days')::interval
-        + (CASE WHEN random() < 0.5 THEN interval '8 hours' ELSE interval '17 hours' END),
-    CASE WHEN random() < 0.7 THEN NOW() - (random()*60 || ' minutes')::interval ELSE NULL END,
-    (ARRAY['camera','sensor','report','police'])[floor(random()*4 + 1)::int],
-    floor(random()*63 + 1)::int
-FROM generate_series(1,80) i;
+    inc_type,
+    inc_severity,
+    rep_time,
+    CASE WHEN random() < 0.7 THEN rep_time + (random()*4 + 1 || ' hours')::interval ELSE NULL END,
+    src,
+    int_id
+FROM generated_incidents;
 
 
 -- =========================
